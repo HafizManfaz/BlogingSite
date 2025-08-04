@@ -33,9 +33,7 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-publish']                             # سب سے نئی پوسٹ سب سے اوپر
-        indexes = [
-            models.Index(fields = ['-publish']),
-        ]
+        indexes = [models.Index(fields = ['-publish']),]
     def __str__(self):
         return self.title
     
@@ -58,7 +56,7 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created']
-        indexex = models.Index(field=['created'])
+        indexes= [models.Index(fields=['created'])]
 
     def __str__(self):
         return f"Comment by {self.name} on {self.post}"
