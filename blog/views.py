@@ -35,15 +35,10 @@ def post_detail(request,year,month,day,post):
     # except Post.DoesNotExist:
     #     raise Http404("No Post Found. ")
 
-    post = get_object_or_404(
-        Post,
-        status=Post.Status.PUBLISHED,
-        slug=post,
-        publish__year = year, 
-        publish__month= month, 
-        publish__day=day)
-
-    return render(request,'blog/post/detail.html',{'post':post})
+    post = get_object_or_404(Post,status=Post.Status.PUBLISHED,slug=post,publish__year = year,publish__month= month,publish__day=day)
+    comments = post.comments.filter(active=True)
+    form = CommentForm()
+    return render(request,'blog/post/detail.html',{'post':post,'comments':comments,'form':form})
 
 def post_share(request,post_id):
     post = get_object_or_404(Post,id = post_id,status = Post.Status.PUBLISHED)
@@ -70,7 +65,7 @@ def post_share(request,post_id):
     return render(request,'blog/post/share.html',{'form':form,'post':post,'sent':sent})
 
 @require_POST
-def post_commetn(request,post_id):
+def post_comment(request,post_id):
     post = get_object_or_404(Post,id=post_id,status=Post.Status.PUBLISHED)
     comment = None
 
@@ -79,6 +74,6 @@ def post_commetn(request,post_id):
         comment = form.save(commit=False)
         comment.post = post
         comment.save()
-    return render(request,'blog/post/comment.html'{'post':post,'form':form,'comment':commetn})
+    return render(request,'blog/post/comment.html',{'post':post,'form':form,'comment':comment})
 
 
