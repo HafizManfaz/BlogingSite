@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from .models import Post
 # from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
@@ -11,8 +12,16 @@ from taggit.models import Tag
 
 # Create your views here.
 
-def post_list(request):
+def post_list(request,tag_slug=None):
+    #Load all published by costom manager
     post_list = Post.published.all()
+    #initally value of tag is None
+    tag = None
+    #checking if user pass some value to slug or not if yes
+    if tag_slug:
+        #select spicific tag or keywords which have specific tag slug
+        tag = get_object_or_404(Tag,slug=tag_slug)
+        post_list = post_list.filter(tags__in = [tag])
     paginator = Paginator(post_list,3)
 
     page_number = request.GET.get('page',1)
@@ -22,7 +31,7 @@ def post_list(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-    return render(request,'blog/post/list.html', {'posts':posts})
+    return render(request,'blog/post/list.html', {'posts':posts,'tag':tag})
 
 # class PostListView(ListView):
 #     queryset= Post.published.all()
