@@ -11,4 +11,4 @@ env/
 *.egg-info/
 .env
 .db
-
+db.sqlite3
